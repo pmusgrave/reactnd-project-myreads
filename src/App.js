@@ -41,7 +41,7 @@ class BooksApp extends React.Component {
     let shelves_copy = {...this.state.shelves};
     let prev_shelf = [...this.state.shelves[book.shelf]];
     let prev_index = prev_shelf.indexOf(book);
-      
+
     if (book.shelf === shelf) {
       return;
     }
@@ -54,6 +54,8 @@ class BooksApp extends React.Component {
         ...prev_state,
         shelves: shelves_copy,
       }));
+
+      BooksAPI.update(book, shelf);
       return;
     }
     else{
@@ -71,7 +73,9 @@ class BooksApp extends React.Component {
       this.setState((prev_state) => ({
         ...prev_state,
         shelves: shelves_copy,
-      }));  
+      }));
+      
+      BooksAPI.update(book, shelf);
     }
   }
 
