@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router,Switch,Route,Link } from 'react-router-dom';
+import { Switch,Route,Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import './App.css';
 import ListBooks from './ListBooks.js';
@@ -71,8 +71,9 @@ class BooksApp extends React.Component {
               read={this.state.read}
               change_shelf={this.change_shelf.bind(this)}/>
             <div className="open-search">
-              
-              <button ><Link path="/add" /></button>
+              <Link to="/add">
+                <button>Add a book</button>
+              </Link>
             </div>
           </div>
         </Route>
@@ -81,4 +82,4 @@ class BooksApp extends React.Component {
   }
 }
 
-export default BooksApp
+export default BooksApp;
