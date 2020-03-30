@@ -13,25 +13,66 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     showSearchPage: false,
-    currently_reading: [],
-    want_to_read : [],
-    read: [],
+    shelves: {
+      currentlyReading: [],
+      wantToRead: [],
+      read: [],  
+    },
   }
 
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
-      this.setState(() => ({
-        books: books,
+      let currentlyReading = Object.values(books).filter((book) => ( book.shelf === "currentlyReading" ));
+      let wantToRead = Object.values(books).filter((book) => ( book.shelf === "wantToRead" ));
+      let read = Object.values(books).filter((book) => ( book.shelf === "read" ));
+
+      this.setState((prev_state) => ({
+        shelves:
+        {
+          currentlyReading: currentlyReading,
+          wantToRead: wantToRead,
+          read: read,  
+        }
       }));
     });
   }
 
   change_shelf = (book, shelf) => {
-    console.log(book,shelf);
-    let updated_book = {}; 
-    Object.assign(updated_book, book);
-    updated_book.current_shelf = shelf;
-    console.log(updated_book,shelf);
+    let shelves_copy = {...this.state.shelves};
+    let prev_shelf = [...this.state.shelves[book.shelf]];
+    let prev_index = prev_shelf.indexOf(book);
+      
+    if (book.shelf === shelf) {
+      return;
+    }
+    else if (shelf === "none") {
+      prev_shelf.splice(prev_index, 1);
+
+      shelves_copy[book.shelf] = prev_shelf;
+
+      this.setState((prev_state) => ({
+        ...prev_state,
+        shelves: shelves_copy,
+      }));
+      return;
+    }
+    else{
+      let new_shelf = [...this.state.shelves[shelf]];
+      let updated_book = {...book};
+
+      updated_book.shelf = shelf;
+
+      prev_shelf.splice(prev_index, 1);
+      new_shelf = new_shelf.concat(updated_book);
+
+      shelves_copy[book.shelf] = prev_shelf;
+      shelves_copy[shelf] = new_shelf;
+
+      this.setState((prev_state) => ({
+        ...prev_state,
+        shelves: shelves_copy,
+      }));  
+    }
   }
 
   render() {
@@ -66,9 +107,9 @@ class BooksApp extends React.Component {
               <h1>MyReads</h1>
             </div>
             <ListBooks
-              currently_reading={this.state.currently_reading}
-              want_to_read={this.state.want_to_read}
-              read={this.state.read}
+              currentlyReading={this.state.shelves["currentlyReading"]}
+              wantToRead={this.state.shelves["wantToRead"]}
+              read={this.state.shelves["read"]}
               change_shelf={this.change_shelf.bind(this)}/>
             <div className="open-search">
               <Link to="/add">

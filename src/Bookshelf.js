@@ -8,7 +8,7 @@ function Bookshelf(props) {
       <div className="bookshelf-books">
         <ol className="books-grid">
           {props.book_list.map((book) => (
-          	<li key={book}>
+          	<li key={book.id}>
 	            <div className="book">
 	              <div className="book-top">
 	                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url({book.image_url})' }}></div>

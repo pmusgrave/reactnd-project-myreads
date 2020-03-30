@@ -7,14 +7,16 @@ function ListBooks(props) {
       <div>
         <Bookshelf
           title="Currently Reading"
-          book_list={props.currently_reading}
+          book_list={props.currentlyReading}
           change_shelf={props.change_shelf}/>
         <Bookshelf
           title="Want to Read"
-          book_list={props.want_to_read}/>
+          book_list={props.wantToRead}
+          change_shelf={props.change_shelf}/>
         <Bookshelf
           title="Read"
-          book_list={props.read}/>
+          book_list={props.read}
+          change_shelf={props.change_shelf}/>
       </div>
     </div>
   );
