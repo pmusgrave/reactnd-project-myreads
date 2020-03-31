@@ -11,7 +11,6 @@ class SearchPage extends Component {
 	};
 
 	update_query = (value) => {
-		console.log(value);
 		if (value === "") {
 			this.setState((prev_state) => ({
 				query: value,
@@ -26,7 +25,6 @@ class SearchPage extends Component {
 				query: value,
 				query_results: data,
 			}));
-			console.log(data);
 		},
 		(err) => {
 			console.log(err);

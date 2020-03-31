@@ -39,14 +39,16 @@ class BooksApp extends React.Component {
   }
 
   change_shelf = (book, shelf) => {
-    let shelves_copy = {...this.state.shelves};
-    let prev_shelf = [...this.state.shelves[book.shelf]];
-    let prev_index = prev_shelf.indexOf(book);
-
     if (book.shelf === shelf) {
       return;
     }
     else if (shelf === "none") {
+      if (book.shelf === "none" || book.shelf === undefined) {
+        return;
+      }
+      let shelves_copy = {...this.state.shelves};
+      let prev_shelf = [...this.state.shelves[book.shelf]];
+      let prev_index = prev_shelf.indexOf(book);
       prev_shelf.splice(prev_index, 1);
 
       shelves_copy[book.shelf] = prev_shelf;
@@ -60,15 +62,19 @@ class BooksApp extends React.Component {
       return;
     }
     else{
+      let shelves_copy = {...this.state.shelves};
+      let prev_shelf;
+      if (book.shelf != undefined) {
+        prev_shelf = [...this.state.shelves[book.shelf]];
+        let prev_index = prev_shelf.indexOf(book);
+        prev_shelf.splice(prev_index, 1);
+        shelves_copy[book.shelf] = prev_shelf;
+      }
+      
       let new_shelf = [...this.state.shelves[shelf]];
       let updated_book = {...book};
-
       updated_book.shelf = shelf;
-
-      prev_shelf.splice(prev_index, 1);
       new_shelf = new_shelf.concat(updated_book);
-
-      shelves_copy[book.shelf] = prev_shelf;
       shelves_copy[shelf] = new_shelf;
 
       this.setState((prev_state) => ({
