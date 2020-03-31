@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import SearchBar from './SearchBar.js';
 import SearchResults from './SearchResults.js';

@@ -7,13 +7,6 @@ import SearchPage from './SearchPage.js';
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false,
     shelves: {
       currentlyReading: [],
       wantToRead: [],
@@ -64,7 +57,18 @@ class BooksApp extends React.Component {
     else{
       let shelves_copy = {...this.state.shelves};
       let prev_shelf;
-      if (book.shelf != undefined) {
+      if (book.shelf === undefined) {
+        let existing_book = [...this.state.shelves["currentlyReading"],
+          ...this.state.shelves["wantToRead"],
+          ...this.state.shelves["read"]]
+        .filter((b) => (b.title === book.title));
+
+        prev_shelf = [...this.state.shelves[existing_book[0].shelf]];
+        let prev_index = prev_shelf.indexOf(book);
+        prev_shelf.splice(prev_index, 1);
+        shelves_copy[existing_book[0].shelf] = prev_shelf;
+      }
+      else {
         prev_shelf = [...this.state.shelves[book.shelf]];
         let prev_index = prev_shelf.indexOf(book);
         prev_shelf.splice(prev_index, 1);
