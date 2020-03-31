@@ -83,7 +83,7 @@ class BooksApp extends React.Component {
   render() {
     return (
       <Switch>
-        <Route exact path="/add">
+        <Route exact path="/search">
           <SearchPage change_shelf={this.change_shelf.bind(this)}/>
         </Route>
 
@@ -98,7 +98,7 @@ class BooksApp extends React.Component {
               read={this.state.shelves["read"]}
               change_shelf={this.change_shelf.bind(this)}/>
             <div className="open-search">
-              <Link to="/add">
+              <Link to="/search">
                 <button>Add a book</button>
               </Link>
             </div>
