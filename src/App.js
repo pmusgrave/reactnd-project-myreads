@@ -51,14 +51,23 @@ class BooksApp extends React.Component {
     .then((data) => {
       try {
         data.forEach(book => {
-          this.state.shelves.currentlyReading.filter((b) => book.id === b.id).map((match) => {
+          this.state.shelves.currentlyReading
+          .filter((b) => book.id === b.id)
+          .map((match) => {
             book.shelf = "currentlyReading";
+            return match;
           })
-          this.state.shelves.wantToRead.filter((b) => book.id === b.id).map((match) => {
+          this.state.shelves.wantToRead
+          .filter((b) => book.id === b.id)
+          .map((match) => {
             book.shelf = "wantToRead";
+            return match;
           })
-          this.state.shelves.read.filter((b) => book.id === b.id).map((match) => {
+          this.state.shelves.read
+          .filter((b) => book.id === b.id)
+          .map((match) => {
             book.shelf = "read";
+            return match;
           })
         });
 
