@@ -12,7 +12,10 @@ function SearchBar(props) {
         	type="text"
         	placeholder="Search by title or author"
         	text={props.query}
-        	onChange={(event) => {props.update_query(event.target.value)}}/>
+        	onChange={(event) => {
+            props.update_query(event.target.value);
+            props.update_query_results(event.target.value)}
+          }/>
       </div>
     </div>
 	);

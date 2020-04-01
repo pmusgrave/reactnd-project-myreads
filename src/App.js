@@ -10,8 +10,10 @@ class BooksApp extends React.Component {
     shelves: {
       currentlyReading: [],
       wantToRead: [],
-      read: [],  
+      read: [],
     },
+    query: "",
+    query_results: [],
   }
 
   componentDidMount() {
@@ -23,70 +25,120 @@ class BooksApp extends React.Component {
       this.setState((prev_state) => ({
         shelves:
         {
-          currentlyReading: currentlyReading,
-          wantToRead: wantToRead,
-          read: read,  
+          currentlyReading,
+          wantToRead,
+          read, 
         }
       }));
     });
   }
 
-  change_shelf = (book, shelf) => {
-    if (book.shelf === shelf) {
+  update_query = (query) => {
+    this.setState((prev_state) => ({
+      query,
+    }));
+  }
+
+  update_query_results = (value) => {
+    if (value === "") {
+      this.setState((prev_state) => ({
+        query_results: [],
+      }));
       return;
     }
-    else if (shelf === "none") {
-      if (book.shelf === "none" || book.shelf === undefined) {
-        return;
-      }
-      let shelves_copy = {...this.state.shelves};
-      let prev_shelf = [...this.state.shelves[book.shelf]];
-      let prev_index = prev_shelf.indexOf(book);
-      prev_shelf.splice(prev_index, 1);
 
-      shelves_copy[book.shelf] = prev_shelf;
+    BooksAPI.search(value)
+    .then((data) => {
+      data.forEach(book => {
+        this.state.shelves.currentlyReading.filter((b) => book.id === b.id).map((match) => {
+          book.shelf = "currentlyReading";
+          console.log(book.id)
+        })
+        this.state.shelves.wantToRead.filter((b) => book.id === b.id).map((match) => {
+          book.shelf = "wantToRead";
+          console.log(book.id)
+        })
+        this.state.shelves.read.filter((b) => book.id === b.id).map((match) => {
+          book.shelf = "read";
+          console.log(book.id)
+        })
+      });
 
       this.setState((prev_state) => ({
-        ...prev_state,
-        shelves: shelves_copy,
+        query_results: data
       }));
+    },
+    (err) => {
+      console.log(err);
+    });
+  }
 
-      BooksAPI.update(book, shelf);
+  change_shelf = (book, shelf) => {
+    let current_shelf;
+    let new_shelf;
+    let shelves_copy = {...this.state.shelves};
+    let updated_book = {...book};
+
+    if (book.shelf === undefined && shelf === "none") {
       return;
     }
-    else{
-      let shelves_copy = {...this.state.shelves};
-      let prev_shelf;
-      if (book.shelf === undefined) {
-        let existing_book = [...this.state.shelves["currentlyReading"],
-          ...this.state.shelves["wantToRead"],
-          ...this.state.shelves["read"]]
-        .filter((b) => (b.title === book.title));
+    else if (book.shelf === shelf) {
+      return;
+    }
+    else if (book.shelf === undefined && shelf !== "none") {
+      current_shelf = [...this.state.query_results];
+      let current_index = current_shelf.indexOf(book);
+      new_shelf = [...this.state.shelves[shelf]];
 
-        prev_shelf = [...this.state.shelves[existing_book[0].shelf]];
-        let prev_index = prev_shelf.indexOf(book);
-        prev_shelf.splice(prev_index, 1);
-        shelves_copy[existing_book[0].shelf] = prev_shelf;
-      }
-      else {
-        prev_shelf = [...this.state.shelves[book.shelf]];
-        let prev_index = prev_shelf.indexOf(book);
-        prev_shelf.splice(prev_index, 1);
-        shelves_copy[book.shelf] = prev_shelf;
-      }
-      
-      let new_shelf = [...this.state.shelves[shelf]];
-      let updated_book = {...book};
       updated_book.shelf = shelf;
       new_shelf = new_shelf.concat(updated_book);
+      current_shelf.splice(current_index, 1, updated_book);
       shelves_copy[shelf] = new_shelf;
 
       this.setState((prev_state) => ({
         ...prev_state,
         shelves: shelves_copy,
+        query_results: current_shelf,
       }));
 
-      BooksAPI.update(book, shelf);
+      BooksAPI.update(updated_book,updated_book.shelf)
+      .then(this.update_query_results(this.state.query));
+    }
+    else if (book.shelf !== undefined && shelf !== "none") {
+      current_shelf = [...this.state.shelves[book.shelf]];
+      let current_index = current_shelf.indexOf(book);
+      new_shelf = [...this.state.shelves[shelf]];
+
+      updated_book.shelf = shelf;
+      current_shelf.splice(current_index, 1);
+      new_shelf = new_shelf.concat(updated_book);
+      shelves_copy[shelf] = new_shelf;
+      shelves_copy[book.shelf] = current_shelf;
+
+      this.setState((prev_state) => ({
+        ...prev_state,
+        shelves: shelves_copy,
+      }));
+
+      BooksAPI.update(updated_book,updated_book.shelf)
+      .then(this.update_query_results(this.state.query));
+    }
+    else if (book.shelf !== undefined && shelf === "none") {
+      current_shelf = [...this.state.shelves[book.shelf]];
+      let current_index = current_shelf.indexOf(book);
+
+      updated_book.shelf = shelf;
+      current_shelf.splice(current_index, 1);
+
+      shelves_copy[book.shelf] = current_shelf;
+
+      this.setState((prev_state) => ({
+        ...prev_state,
+        shelves: shelves_copy,
+      }));
+
+      BooksAPI.update(updated_book,updated_book.shelf)
+      .then(this.update_query_results(this.state.query));
     }
   }
 
@@ -94,7 +146,12 @@ class BooksApp extends React.Component {
     return (
       <Switch>
         <Route exact path="/search">
-          <SearchPage change_shelf={this.change_shelf.bind(this)}/>
+          <SearchPage
+            change_shelf={this.change_shelf.bind(this)}
+            query={this.state.query}
+            query_results={this.state.query_results}
+            update_query={this.update_query.bind(this)}
+            update_query_results={this.update_query_results.bind(this)}/>
         </Route>
 
         <Route exact path="/">
