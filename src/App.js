@@ -49,24 +49,28 @@ class BooksApp extends React.Component {
 
     BooksAPI.search(value)
     .then((data) => {
-      data.forEach(book => {
-        this.state.shelves.currentlyReading.filter((b) => book.id === b.id).map((match) => {
-          book.shelf = "currentlyReading";
-          console.log(book.id)
-        })
-        this.state.shelves.wantToRead.filter((b) => book.id === b.id).map((match) => {
-          book.shelf = "wantToRead";
-          console.log(book.id)
-        })
-        this.state.shelves.read.filter((b) => book.id === b.id).map((match) => {
-          book.shelf = "read";
-          console.log(book.id)
-        })
-      });
+      try {
+        data.forEach(book => {
+          this.state.shelves.currentlyReading.filter((b) => book.id === b.id).map((match) => {
+            book.shelf = "currentlyReading";
+          })
+          this.state.shelves.wantToRead.filter((b) => book.id === b.id).map((match) => {
+            book.shelf = "wantToRead";
+          })
+          this.state.shelves.read.filter((b) => book.id === b.id).map((match) => {
+            book.shelf = "read";
+          })
+        });
 
-      this.setState((prev_state) => ({
-        query_results: data
-      }));
+        this.setState((prev_state) => ({
+          query_results: data
+        }));  
+      }
+      catch {
+        this.setState((prev_state) => ({
+          query_results: [],
+        }));
+      }
     },
     (err) => {
       console.log(err);
