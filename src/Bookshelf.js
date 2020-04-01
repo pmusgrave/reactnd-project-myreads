@@ -11,7 +11,12 @@ function Bookshelf(props) {
           	<li key={book.id}>
 	            <div className="book">
 	              <div className="book-top">
-	                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url({book.image_url})' }}></div>
+	                <div className="book-cover"
+	                	style={{ 
+	                		width: 128,
+	                		height: 193,
+	                		backgroundImage:`url(${book.imageLinks && book.imageLinks.thumbnail?`${book.imageLinks.thumbnail}`:`http://via.placeholder.com/128x193?text=No%20Cover`})`}}>
+            		</div>
 	                <BookshelfChanger
 	                	book={book}
 	                	change_shelf={props.change_shelf}/>

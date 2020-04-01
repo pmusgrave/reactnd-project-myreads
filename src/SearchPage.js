@@ -37,6 +37,7 @@ class SearchPage extends Component {
 	      	query={this.state.query}
 	      	update_query={this.update_query.bind(this)}/>
 	      <SearchResults
+	      	query={this.state.query}
 	      	list={this.state.query_results}
 	      	change_shelf={this.props.change_shelf}/>
 	    </div>
